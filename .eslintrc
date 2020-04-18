@@ -1,0 +1,56 @@
+{
+    "env": {
+        "browser": true
+    },
+    "extends": [
+        "airbnb-base",
+        "plugin:prettier/recommended",
+        "plugin:vue/recommended",
+        "prettier",
+        "prettier/vue"
+    ],
+    "plugins": [
+        "prettier"
+    ],
+    "rules": {
+        "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+        "max-classes-per-file": ["error", 12],
+        "max-statements-per-line": ["error", { "max": 2 }],
+        "no-alert": "off",
+        "no-param-reassign": "warn",
+        "no-underscore-dangle": "off",
+        "padding-line-between-statements": ["error", { "blankLine": "never", "prev": "if", "next": "*" }],
+        "prettier/prettier": "warn",
+        "no-restricted-globals": "warn",
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "js": "never",
+                "ts": "never"
+            }
+        ],
+        "vue/html-indent": ["error", 4],
+        "vue/no-v-html": "off"
+    },
+    "parserOptions": {
+        "parser": "babel-eslint"
+    },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [".js", ".ts"]
+            }
+        }
+    },
+    "overrides": [
+        {
+            "files": ["*.js"],
+            "rules": {
+                "@typescript-eslint/explicit-function-return-type": "off",
+                "@typescript-eslint/no-var-requires": "off",
+                "import/no-extraneous-dependencies": "off"
+            }
+        }
+    ]
+}
