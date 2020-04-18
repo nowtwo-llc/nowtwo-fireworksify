@@ -1,0 +1,14 @@
+# Dependency directories
+lib/
+node_modules/
+temp/
+umd/
+
+# ESLint
+.eslintcache
+eslint-report.html
+
+# Logs
+logs
+*.log
+npm-debug.log*
