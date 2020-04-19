@@ -1,5 +1,8 @@
 const path = require('path');
 
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserJSPlugin = require('terser-webpack-plugin');
+
 module.exports = {
     type: 'web-module',
     npm: {
@@ -21,8 +24,8 @@ module.exports = {
             reporters: ['progress'],
             singleRun: true,
             files: [
-                'dist/Fireworksify.css',
-                'dist/Fireworksify.js',
+                'dist/fireworksify.css',
+                'dist/fireworksify.js',
                 {
                     included: false,
                     nocache: true,
@@ -49,13 +52,24 @@ module.exports = {
             config.mode = isDev ? 'development' : 'production';
             config.entry = ['./src/Fireworksify.css', './src/Fireworksify.ts'];
             config.optimization = {
-                noEmitOnErrors: false
+                noEmitOnErrors: false,
+                minimize: true,
+                minimizer: [
+                    new TerserJSPlugin({}),
+                    new OptimizeCSSAssetsPlugin({
+                        cssProcessorOptions: {
+                            discardComments: {
+                                removeAll: true
+                            }
+                        }
+                    })
+                ]
             };
 
             // Change output name
             config.output = {
                 ...config.output,
-                filename: 'Fireworksify.js',
+                filename: 'fireworksify.js',
                 library: 'Fireworksify'
             };
 
@@ -82,7 +96,7 @@ module.exports = {
                 }
             });
 
-            // config.devtool = 'source-map';
+            config.devtool = 'source-map';
             return config;
         }
     }

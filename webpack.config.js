@@ -58,6 +58,7 @@ module.exports = {
 };
 
 if (ENVIRONMENT === 'development') {
+    module.exports.mode = 'development';
     module.exports.optimization = {
         minimizer: [
             new TerserJSPlugin({}),
@@ -65,6 +66,7 @@ if (ENVIRONMENT === 'development') {
         ]
     };
 } else if (ENVIRONMENT === 'production') {
+    module.exports.mode = 'production';
     module.exports.optimization = {
         minimize: true,
         minimizer: [
