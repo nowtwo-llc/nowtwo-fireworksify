@@ -90,6 +90,10 @@ export default class Fireworksify {
         this.initiateStop();
     }
 
+    public generate(x: number, y: number) {
+        this.newFireworkSeed(x, y);
+    }
+
     private initiateStop() {
         setTimeout(() => {
             clearInterval(this._timerId);

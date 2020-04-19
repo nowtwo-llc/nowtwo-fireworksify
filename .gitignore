@@ -1,4 +1,5 @@
 # Dependency directories
+build/
 lib/
 node_modules/
 
