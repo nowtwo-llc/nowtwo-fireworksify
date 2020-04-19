@@ -5,7 +5,7 @@ export default class Fireworksify {
     private _boardEl;
     private _before;
     private _id;
-    private _seedClass;
+    private _availableSeeds;
     private _duration;
     private _timerId;
     constructor(config: any);

@@ -9,10 +9,11 @@ const ACCELERATION = 0.0005;
 const GRAVITY = 0.0005;
 const VELOCITY = 0.3;
 
-// Don't think we need these values.
-// Holding here just in case.
-// const cursorXOffset = 5;
-// const cursorYOffset = 0;
+const DEFAULT_SEED = {
+    explode: true,
+    destroy: true,
+    class: 'firework-seed--default'
+}
 
 class FireworkBatch {
     public el: HTMLElement = document.createElement('div');
@@ -25,6 +26,8 @@ class FireworkSeed {
     public velocityY: number = 0;
     public positionX: number = 0;
     public positionY: number = 0;
+    public seedConfig: any = null;
+    public peaked: boolean = false;
 }
 
 class FireworkParticle {
@@ -44,7 +47,7 @@ export default class Fireworksify {
     private _before: number = Date.now();
     private _id: any = null;
 
-    private _seedClass: string = 'firework-seed--default';
+    private _availableSeeds: any[] = [];
 
     // Setting the default to 10 seconds.
     private _duration: number = 10000;
@@ -55,10 +58,13 @@ export default class Fireworksify {
         document.body.append(this._boardEl);        
 
         if (config && config.duration) {
-            this._duration = config.duration;
+            this._duration = config.duration * 1000;
         }
-        if (config && config.seedClass) {
-            this._seedClass = config.seedClass;
+        if (config && config.showDefault) {
+            this._availableSeeds.push(DEFAULT_SEED);
+        }
+        if (config && Array.isArray(config.additionalSeeds) && config.additionalSeeds.length) {
+            this._availableSeeds = this._availableSeeds.concat(config.additionalSeeds);
         }
 
         this._id = setInterval(() => {
@@ -130,8 +136,11 @@ export default class Fireworksify {
     }
 
     private newFireworkSeed(x: number, y: number): FireworkSeed {
+        const seedConfig = this._availableSeeds[Math.floor(Math.random() * this._availableSeeds.length)];
+
         let fireworkSeed = new FireworkSeed();
-        fireworkSeed.el.setAttribute('class', `firework-seed ${this._seedClass}`);
+        fireworkSeed.seedConfig = seedConfig;
+        fireworkSeed.el.setAttribute('class', `firework-seed ${seedConfig.class}`);
 
         this._boardEl.appendChild(fireworkSeed.el);
 
@@ -191,7 +200,25 @@ export default class Fireworksify {
                 fireworkSeed.el.style.left = fireworkSeed.positionX + 'px';
                 fireworkSeed.el.style.top = fireworkSeed.positionY + 'px';
             } else {
-                this.newFireworkStar(fireworkSeed.positionX, fireworkSeed.positionY);
+                if (!fireworkSeed.peaked && fireworkSeed.seedConfig.explode) {
+                    this.newFireworkStar(fireworkSeed.positionX, fireworkSeed.positionY);                    
+                }
+                fireworkSeed.peaked = true;
+
+                if (!fireworkSeed.seedConfig.destroy) {
+                    fireworkSeed.velocityX += fireworkSeed.velocityX * ACCELERATION * deltaTime;
+                    fireworkSeed.velocityY += GRAVITY * deltaTime + fireworkSeed.velocityY * ACCELERATION * deltaTime;
+                    fireworkSeed.positionX += fireworkSeed.velocityX * deltaTime;
+                    fireworkSeed.positionY += fireworkSeed.velocityY * deltaTime;
+                    fireworkSeed.el.style.left = fireworkSeed.positionX + 'px';
+                    fireworkSeed.el.style.top = fireworkSeed.positionY + 'px';
+                } else {
+                    fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
+                    this._seeds.splice(index, 1);
+                }
+            }
+
+            if (fireworkSeed.peaked && fireworkSeed.positionY > window.innerHeight) {
                 fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
                 this._seeds.splice(index, 1);
             }

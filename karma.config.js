@@ -2,8 +2,8 @@ module.exports = (config) => {
     config.set({
         frameworks: ['mocha', 'chai'],
         files: [
-            'dist/Fireworksify.css',
-            'dist/Fireworksify.js',
+            'dist/fireworksify.css',
+            'dist/fireworksify.js',
             'tests/unit/**/*.spec.js',
             {
                 pattern: 'tests/**/*',

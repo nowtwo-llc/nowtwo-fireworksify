@@ -1,1 +1,0 @@
-{"version":3,"file":"FireworksUtils.d.ts","sourceRoot":"","sources":["../src/FireworksUtils.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,OAAO,cAAc;IACxB,YAAY,EAAE,MAAM,CAAK;IAEzB,SAAS,EAAE,MAAM,CAAK;IACtB,YAAY,EAAE,MAAM,CAAK;IACzB,aAAa,EAAE,MAAM,CAAK;IAE1B,WAAW,IAAI,MAAM;IAMrB,WAAW,CAAC,KAAK,EAAE,gBAAgB,GAAG,WAAW;CAW3D"}
