@@ -57,12 +57,16 @@ window.onload = function() {
 
 Variable | Type | Description
 --- | --- | ---
-duration | *integer* | Sets the number of seconds the fireworks display will run.
-showDefault | *boolean* | Determines if the instantiated object is going to use the default fireworks seed
-additionalSeeds | *array* | An array of additional seed type objects that will be selected at random when a new seed is triggered.
+duration | *integer* | Sets the number of seconds the fireworks display will run. (**Default: 10**)
+showDefault | *boolean* | Determines if the instantiated object is going to use the default fireworks seed. (**Default: true**)
+additionalSeeds | *array* | An array of additional seed type objects that will be selected at random when a new seed is triggered. (**Default: []**)
 additionalSeeds.explode | *boolean* | Determines if a seed is going to explode at the top of its arch.
 additionalSeeds.destroy | *boolean* | Determines if a seed gets destroyed at the top of its arch. (removed from dom) If not, it will fall back down and get removed from the dom when it leaves the view.
 additionalSeeds.class | *boolean* | This is a styling options for the new seed.
+
+## Authors
+
+* **nowtwo-llc** - [nowtwo-llc.com](https://nowtwo-llc.com/)
 
 ## License
 
