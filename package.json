@@ -3,8 +3,7 @@
     "description": "The best way to get fireworks to explode all over a website.",
     "files": [
         "build/",
-        "dist/",
-        "src/www"
+        "dist/"
     ],
     "main": "src/Fireworksify.ts",
     "name": "fireworksify",
