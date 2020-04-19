@@ -6,12 +6,7 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 const WebpackShellPluginNext = require('webpack-shell-plugin-next');
 
 const BUILD_DIR = process.env.BUILD_DIR ? path.resolve(process.env.BUILD_DIR) : path.resolve(__dirname, './dist');
-
 const ENVIRONMENT = process.env.NODE_ENV;
-const ENVIRONMENT_VARS = {
-    development: require('./env.development.json'),
-    production: require('./env.production.json')
-};
 
 module.exports = {
     entry: './src/Fireworksify.ts',
