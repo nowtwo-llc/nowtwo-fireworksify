@@ -82,7 +82,7 @@ module.exports = {
                 }
             });
 
-            config.devtool = 'source-map';
+            // config.devtool = 'source-map';
             return config;
         }
     }
