@@ -2,7 +2,9 @@
 
 Ever wanted to create exploding fireworks on your website or app? Ever want to have images flying through your website or app with an exploding effect? If yes, then this little project is for you!
 
-We created Fireworksify to help developers add something fun to their application. This project will add a VERY minimal size to your page. The total size for this function is **~2k**.
+We created Fireworksify to help developers add something fun to their application. This project will add a VERY minimal size to your page. The total size for this function is **~2.5k**.
+
+Check out a [fireworksify demo](https://nowtwo-llc.github.io/fireworksify.html)!
 
 ## Installing
 
@@ -63,6 +65,13 @@ additionalSeeds | *array* | An array of additional seed type objects that will b
 additionalSeeds.explode | *boolean* | Determines if a seed is going to explode at the top of its arch.
 additionalSeeds.destroy | *boolean* | Determines if a seed gets destroyed at the top of its arch. (removed from dom) If not, it will fall back down and get removed from the dom when it leaves the view.
 additionalSeeds.class | *boolean* | This is a styling options for the new seed.
+
+## Events
+Name | Description
+--- | ---
+he:fireworksify:start | Fired when a timed fireworks display is started through an instantiated fireworksify object.
+he:fireworksify:stop | Fired when a timed fireworks display is stopped through an instantiated fireworksify object.
+*Note - All events are fired/triggered on the document.*
 
 ## Authors
 

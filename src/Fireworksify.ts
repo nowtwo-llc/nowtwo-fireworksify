@@ -2,7 +2,7 @@ import './Fireworksify.css';
 
 const FIREWORK_PARTICLE_INITIAL_VELOCITY = 0.5;
 const FIREWORK_SEED_INITIAL_VELOCITY = .85;
-const FIREWORK_PARTICLE_INITIAL_TIMER_VALUE = 3500;
+const FIREWORK_PARTICLE_INITIAL_TIMER_VALUE = 2500;
 const FIREWORK_SEED_INITIAL_TIMER_VALUE = 1000;
 
 const ACCELERATION = 0.0005;
@@ -21,6 +21,7 @@ class FireworkBatch {
 
 class FireworkSeed {
     public el: HTMLElement = document.createElement('div');
+    public id: number = 0;
     public time: number = 0;
     public velocityX: number = 0;
     public velocityY: number = 0;
@@ -32,6 +33,7 @@ class FireworkSeed {
 
 class FireworkParticle {
     public el: HTMLElement = document.createElement('div');
+    public id: number = 0;
     public time: number = 0;
     public velocityX: number = 0;
     public velocityY: number = 0;
@@ -46,6 +48,7 @@ export default class Fireworksify {
 
     private _before: number = Date.now();
     private _id: any = null;
+    private _domId: number = 1000;
 
     private _availableSeeds: any[] = [];
 
@@ -75,6 +78,9 @@ export default class Fireworksify {
     public start(duration: number) {
         const centerOffset = window.innerWidth / 4;
 
+        const startEvent = new Event('he:fireworksify:start');
+        document.dispatchEvent(startEvent);
+
         this._timerId = setInterval(() => {
             const direction = (Math.round(Math.random())) * -1;
             let offset = Math.round(Math.random() * centerOffset);
@@ -96,12 +102,22 @@ export default class Fireworksify {
 
     private initiateStop() {
         setTimeout(() => {
+            const stopEvent = new Event('he:fireworksify:stop');
+            document.dispatchEvent(stopEvent);
+
             clearInterval(this._timerId);
         }, this._duration);
     }
 
+    private getNextId(): number {
+        this._domId++;
+        return this._domId;
+    }
+
     private newFireworkParticle(x: number, y: number, angle: number): FireworkParticle {
         let fireworkParticle = new FireworkParticle();
+        fireworkParticle.id = this.getNextId();
+        fireworkParticle.el.id = `he-firework-particle-${fireworkParticle.id}`;
         fireworkParticle.el.setAttribute('class', 'firework-particle');
         fireworkParticle.time = FIREWORK_PARTICLE_INITIAL_TIMER_VALUE;
 
@@ -143,7 +159,9 @@ export default class Fireworksify {
         const seedConfig = this._availableSeeds[Math.floor(Math.random() * this._availableSeeds.length)];
 
         let fireworkSeed = new FireworkSeed();
+        fireworkSeed.id = this.getNextId();
         fireworkSeed.seedConfig = seedConfig;
+        fireworkSeed.el.id = `he-firework-seed-${fireworkSeed.id}`;
         fireworkSeed.el.setAttribute('class', `firework-seed ${seedConfig.class}`);
 
         this._boardEl.appendChild(fireworkSeed.el);
@@ -219,10 +237,13 @@ export default class Fireworksify {
                 } else {
                     fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
                     this._seeds.splice(index, 1);
+
+                    fireworkSeed = null;
                 }
             }
 
-            if (fireworkSeed.peaked && fireworkSeed.positionY > window.innerHeight) {
+            // Making sure we remove seeds if they are out of view.
+            if (fireworkSeed !== null && fireworkSeed.peaked && fireworkSeed.positionY > window.innerHeight) {
                 fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
                 this._seeds.splice(index, 1);
             }
@@ -241,6 +262,16 @@ export default class Fireworksify {
             } else {
                 fireworkParticle.el.parentNode.removeChild(fireworkParticle.el);
                 this._particles.splice(index, 1);
+
+                fireworkParticle = null;
+            }
+
+            // Making sure we remove particles if they are out of view.
+            if (fireworkParticle !== null && fireworkParticle.positionY > window.innerHeight) {
+                fireworkParticle.el.parentNode.removeChild(fireworkParticle.el);
+                this._particles.splice(index, 1);
+
+                fireworkParticle = null;
             }
         });
     }
