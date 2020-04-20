@@ -52,19 +52,22 @@ module.exports = {
             config.mode = isDev ? 'development' : 'production';
             config.entry = ['./src/Fireworksify.css', './src/Fireworksify.ts'];
             config.optimization = {
-                noEmitOnErrors: false,
-                minimize: true,
-                minimizer: [
-                    new TerserJSPlugin({}),
-                    new OptimizeCSSAssetsPlugin({
-                        cssProcessorOptions: {
-                            discardComments: {
-                                removeAll: true
-                            }
-                        }
-                    })
-                ]
+                noEmitOnErrors: false
             };
+            // config.optimization = {
+            //     noEmitOnErrors: false,
+            //     minimize: true,
+            //     minimizer: [
+            //         new TerserJSPlugin({}),
+            //         new OptimizeCSSAssetsPlugin({
+            //             cssProcessorOptions: {
+            //                 discardComments: {
+            //                     removeAll: true
+            //                 }
+            //             }
+            //         })
+            //     ]
+            // };
 
             // Change output name
             config.output = {

@@ -8,7 +8,6 @@
         "lib": ["es2018", "dom"],
         "module": "es2015",
         "moduleResolution": "node",
-        "noImplicitAny": true,
         "noResolve": false,
         "outDir": "./build",
         "removeComments": true,

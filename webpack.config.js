@@ -33,14 +33,6 @@ module.exports = {
     plugins: [
         new MiniCSSExtractPlugin({
             filename: ENVIRONMENT === 'production' ? 'fireworksify.min.css' : 'fireworksify.css',
-        }),
-        new WebpackShellPluginNext({
-            onBuildStart: {
-                scripts: ['echo Starting build process...']
-            },
-            onBuildEnd: {
-                scripts: ['bash post_build.sh']
-            }
         })
     ],
     watchOptions: {
