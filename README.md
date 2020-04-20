@@ -71,6 +71,7 @@ Name | Description
 --- | ---
 he:fireworksify:start | Fired when a timed fireworks display is started through an instantiated fireworksify object.
 he:fireworksify:stop | Fired when a timed fireworks display is stopped through an instantiated fireworksify object.
+
 *Note - All events are fired/triggered on the document.*
 
 ## Authors
