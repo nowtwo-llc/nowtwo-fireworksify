@@ -13,6 +13,13 @@
                 height: 100%;
                 background-color: #000;
             }
+            pre {
+                margin: 0;
+                padding: 0;
+            }
+            a, a:hover, a:visited, a:active {
+                color: white;
+            }
             .hedgie-stunna-shades {
                 width: 100px;
                 height: 124px;
@@ -20,8 +27,23 @@
             }
         </style>
     </head>
-    <body></body>
+    <body>
+        <pre>
+            <br />
+            <br />
+            <a href="javascript:;" onclick="runDisplay();">Run Display</a>
+            <a href="javascript:;" onclick="launchOne();">Fire One</a>
+        </pre>
+    </body>
     <link rel="stylesheet" type="text/css" href="../dist/fireworksify.css" media="all"/>
     <script src="../dist/fireworksify.js"></script>
     <script src="./main.js"></script>
+    <script>
+        document.addEventListener('he:fireworksify:start', function(e) {
+            // Listener for when fireworksify starts.
+        }, false);
+        document.addEventListener('he:fireworksify:stop', function(e) {
+            // Listener for when fireworksify stops.
+        }, false);
+    </script>
 </html>
