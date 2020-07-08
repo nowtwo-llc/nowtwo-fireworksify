@@ -1,30 +1,32 @@
 {
     "author": "Classify Learning",
+    "engines": {
+        "npm": "Use Yarn instead",
+        "yarn": "^1.22.0"
+    },
+    "name": "@classifylearning/fireworksify",
     "description": "The best way to get fireworks to explode all over a website.",
-    "files": [
-        "build/",
-        "dist/"
-    ],
+    "repository": "git@github.com:classifylearning/fireworksify.git",
     "main": "src/Fireworksify.ts",
-    "name": "fireworksify",
     "license": "MIT",
-    "version": "1.0.1",
-    "private": false,
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/classifylearning/fireworksify"
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/"
     },
     "scripts": {
         "build": "nwb build-web-module --copy-files && ./scripts/cleanout.sh",
         "build:dev": "NWB_MODE=development nwb build-web-module --copy-files && ./scripts/cleanout.sh",
         "clean": "nwb clean-module",
-
         "eslint:format": "prettier-eslint --eslint-config-path '.eslintrc' --write $PWD/'src/**/*.{js,ts,jsx,tsx,vue}' $PWD/'*.{js,ts}'",
         "eslint:report": "clear && echo 'Generating report in eslint-report.html...' && echo 'Generated file will be visible after command finishes' && eslint --fix --cache --color -o eslint-report.html -f html $PWD/'src/**/*.{js,ts,jsx,tsx,vue}'",
         "eslint": "eslint --fix --cache --color",
         "test:unit": "nwb test",
         "test": "yarn run clean && yarn run build && yarn run test:unit"
     },
+    "version": "1.0.2",
+    "files": [
+        "build/",
+        "dist/"
+    ],
     "devDependencies": {
         "@babel/core": "^7.7.0",
         "@types/node": "^12.12.5",

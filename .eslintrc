@@ -4,37 +4,31 @@
     },
     "extends": [
         "airbnb-base",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "plugin:prettier/recommended",
-        "plugin:vue/recommended",
-        "prettier",
-        "prettier/vue"
+        "prettier/@typescript-eslint"
     ],
-    "plugins": [
-        "prettier"
-    ],
+
+    "plugins": ["@typescript-eslint", "prettier"],
     "rules": {
+        "@typescript-eslint/ban-ts-ignore": "warn",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/restrict-plus-operands": "error",
         "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
         "max-classes-per-file": ["error", 12],
         "max-statements-per-line": ["error", { "max": 2 }],
-        "no-alert": "off",
         "no-param-reassign": "warn",
         "no-underscore-dangle": "off",
         "padding-line-between-statements": ["error", { "blankLine": "never", "prev": "if", "next": "*" }],
         "prettier/prettier": "warn",
-        "no-restricted-globals": "warn",
-        "import/extensions": [
-            "error",
-            "ignorePackages",
-            {
-                "js": "never",
-                "ts": "never"
-            }
-        ],
-        "vue/html-indent": ["error", 4],
-        "vue/no-v-html": "off"
+        "no-restricted-globals": "warn"
     },
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "parser": "babel-eslint"
+        "project": "./tsconfig.json",
+        "tsconfigRootDir": "."
     },
     "settings": {
         "import/resolver": {
@@ -50,6 +44,12 @@
                 "@typescript-eslint/explicit-function-return-type": "off",
                 "@typescript-eslint/no-var-requires": "off",
                 "import/no-extraneous-dependencies": "off"
+            }
+        },
+        {
+            "files": ["./tests"],
+            "env": {
+                "mocha": true
             }
         }
     ]
