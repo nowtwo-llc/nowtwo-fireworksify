@@ -1,7 +1,7 @@
 import './Fireworksify.css';
 
 const FIREWORK_PARTICLE_INITIAL_VELOCITY = 0.5;
-const FIREWORK_SEED_INITIAL_VELOCITY = .85;
+const FIREWORK_SEED_INITIAL_VELOCITY = 0.85;
 const FIREWORK_PARTICLE_INITIAL_TIMER_VALUE = 2500;
 const FIREWORK_SEED_INITIAL_TIMER_VALUE = 1000;
 
@@ -13,7 +13,7 @@ const DEFAULT_SEED = {
     explode: true,
     destroy: true,
     class: 'firework-seed--default'
-}
+};
 
 class FireworkBatch {
     public el: HTMLElement = document.createElement('div');
@@ -21,24 +21,24 @@ class FireworkBatch {
 
 class FireworkSeed {
     public el: HTMLElement = document.createElement('div');
-    public id: number = 0;
-    public time: number = 0;
-    public velocityX: number = 0;
-    public velocityY: number = 0;
-    public positionX: number = 0;
-    public positionY: number = 0;
+    public id = 0;
+    public time = 0;
+    public velocityX = 0;
+    public velocityY = 0;
+    public positionX = 0;
+    public positionY = 0;
     public seedConfig: any = null;
-    public peaked: boolean = false;
+    public peaked = false;
 }
 
 class FireworkParticle {
     public el: HTMLElement = document.createElement('div');
-    public id: number = 0;
-    public time: number = 0;
-    public velocityX: number = 0;
-    public velocityY: number = 0;
-    public positionX: number = 0;
-    public positionY: number = 0;
+    public id = 0;
+    public time = 0;
+    public velocityX = 0;
+    public velocityY = 0;
+    public positionX = 0;
+    public positionY = 0;
 }
 
 export default class Fireworksify {
@@ -48,17 +48,17 @@ export default class Fireworksify {
 
     private _before: number = Date.now();
     private _id: any = null;
-    private _domId: number = 1000;
+    private _domId = 1000;
 
     private _availableSeeds: any[] = [];
 
     // Setting the default to 10 seconds.
-    private _duration: number = 10000;
+    private _duration = 10000;
     private _timerId: any = null;
 
     constructor(config: any) {
         this._boardEl = document.createElement('div');
-        document.body.append(this._boardEl);        
+        document.body.append(this._boardEl);
 
         if (config && config.duration) {
             this._duration = config.duration * 1000;
@@ -69,20 +69,19 @@ export default class Fireworksify {
         if (config && Array.isArray(config.additionalSeeds) && config.additionalSeeds.length) {
             this._availableSeeds = this._availableSeeds.concat(config.additionalSeeds);
         }
-
         this._id = setInterval(() => {
             this.frame();
         }, 5);
     }
 
-    public start(duration: number) {
+    public start(): void {
         const centerOffset = window.innerWidth / 4;
 
         const startEvent = new Event('he:fireworksify:start');
         document.dispatchEvent(startEvent);
 
         this._timerId = setInterval(() => {
-            const direction = (Math.round(Math.random())) * -1;
+            const direction = Math.round(Math.random()) * -1;
             let offset = Math.round(Math.random() * centerOffset);
             if (direction < 0) {
                 offset *= -1;
@@ -90,17 +89,17 @@ export default class Fireworksify {
             const additionalTime = Math.round(Math.random() * 500);
 
             setTimeout(() => {
-                this.newFireworkSeed(((window.innerWidth / 2) + offset), (window.innerHeight + 10));
+                this.newFireworkSeed(window.innerWidth / 2 + offset, window.innerHeight + 10);
             }, additionalTime);
         }, 350);
         this.initiateStop();
     }
 
-    public generate(x: number, y: number) {
+    public generate(x: number, y: number): void {
         this.newFireworkSeed(x, y);
     }
 
-    private initiateStop() {
+    private initiateStop(): void {
         setTimeout(() => {
             const stopEvent = new Event('he:fireworksify:stop');
             document.dispatchEvent(stopEvent);
@@ -110,12 +109,12 @@ export default class Fireworksify {
     }
 
     private getNextId(): number {
-        this._domId++;
+        this._domId += 1;
         return this._domId;
     }
 
     private newFireworkParticle(x: number, y: number, angle: number): FireworkParticle {
-        let fireworkParticle = new FireworkParticle();
+        const fireworkParticle = new FireworkParticle();
         fireworkParticle.id = this.getNextId();
         fireworkParticle.el.id = `he-firework-particle-${fireworkParticle.id}`;
         fireworkParticle.el.setAttribute('class', 'firework-particle');
@@ -129,23 +128,30 @@ export default class Fireworksify {
         }
 
         if (angle > 270) {
-            fireworkParticle.velocityX = FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin(angle * Math.PI / 180) * (1 - Math.random() * VELOCITY);
-            fireworkParticle.velocityY = FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos(angle * Math.PI / 180) * (1 - Math.random() * VELOCITY);
+            fireworkParticle.velocityX =
+                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+            fireworkParticle.velocityY =
+                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
         } else if (angle > 180) {
-            fireworkParticle.velocityX = FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin(angle * Math.PI / 180) * (1 - Math.random() * VELOCITY);
-            fireworkParticle.velocityY = FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos(angle * Math.PI / 180) * (1 - Math.random() * VELOCITY);
-        } else if(angle > 90) {
-            fireworkParticle.velocityX = FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin(angle * Math.PI / 180) * (1 - Math.random() * VELOCITY);
-            fireworkParticle.velocityY = FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos(angle * Math.PI / 180) * (1 - Math.random() * VELOCITY);
+            fireworkParticle.velocityX =
+                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+            fireworkParticle.velocityY =
+                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+        } else if (angle > 90) {
+            fireworkParticle.velocityX =
+                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+            fireworkParticle.velocityY =
+                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
         } else {
-            fireworkParticle.velocityX = FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin(angle * Math.PI / 180) * (1 - Math.random() * VELOCITY);
-            fireworkParticle.velocityY = FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos(angle * Math.PI / 180) * (1 - Math.random() * VELOCITY);
+            fireworkParticle.velocityX =
+                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+            fireworkParticle.velocityY =
+                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
         }
-
         fireworkParticle.positionX = x;
         fireworkParticle.positionY = y;
-        fireworkParticle.el.style.left = fireworkParticle.positionX + 'px';
-        fireworkParticle.el.style.top = fireworkParticle.positionY + 'px';
+        fireworkParticle.el.style.left = `${fireworkParticle.positionX}px`;
+        fireworkParticle.el.style.top = `${fireworkParticle.positionY}px`;
 
         if (this._particles === null) {
             this._particles = [];
@@ -158,7 +164,7 @@ export default class Fireworksify {
     private newFireworkSeed(x: number, y: number): FireworkSeed {
         const seedConfig = this._availableSeeds[Math.floor(Math.random() * this._availableSeeds.length)];
 
-        let fireworkSeed = new FireworkSeed();
+        const fireworkSeed = new FireworkSeed();
         fireworkSeed.id = this.getNextId();
         fireworkSeed.seedConfig = seedConfig;
         fireworkSeed.el.id = `he-firework-seed-${fireworkSeed.id}`;
@@ -166,22 +172,21 @@ export default class Fireworksify {
 
         this._boardEl.appendChild(fireworkSeed.el);
 
-        const direction = (Math.round(Math.random())) * -1;
-        let additionalVelocity = (Math.round(Math.random() * 200)) / 1000;
+        const direction = Math.round(Math.random()) * -1;
+        let additionalVelocity = Math.round(Math.random() * 200) / 1000;
         if (direction < 0) {
             additionalVelocity *= -1;
         }
-
         // Which direction is the seed going to move on the x-axis?
-        const velocityX = (Math.round(Math.random()))? 0.1: -0.1;
+        const velocityX = Math.round(Math.random()) ? 0.1 : -0.1;
 
         fireworkSeed.time = FIREWORK_SEED_INITIAL_TIMER_VALUE;
         fireworkSeed.velocityX = velocityX;
         fireworkSeed.velocityY = FIREWORK_SEED_INITIAL_VELOCITY + additionalVelocity;
         fireworkSeed.positionX = x;
         fireworkSeed.positionY = y;
-        fireworkSeed.el.style.left = fireworkSeed.positionX + 'px';
-        fireworkSeed.el.style.top = fireworkSeed.positionY + 'px';
+        fireworkSeed.el.style.left = `${fireworkSeed.positionX}px`;
+        fireworkSeed.el.style.top = `${fireworkSeed.positionY}px`;
 
         if (this._seeds === null) {
             this._seeds = [];
@@ -189,12 +194,12 @@ export default class Fireworksify {
         this._seeds.push(fireworkSeed);
 
         return fireworkSeed;
-    } 
+    }
 
     private newFireworkStar(x: number, y: number) {
-        let fireworkBatch = new FireworkBatch();
+        const fireworkBatch = new FireworkBatch();
         fireworkBatch.el.setAttribute('class', 'firework-batch');
-        
+
         let angle = 0;
         while (angle < 360) {
             const fireworkParticle = this.newFireworkParticle(x, y, angle);
@@ -204,11 +209,11 @@ export default class Fireworksify {
         }
 
         this._boardEl.appendChild(fireworkBatch.el);
-    } 
+    }
 
     private frame() {
-        let current = Date.now();
-        let deltaTime = current - this._before;
+        const current = Date.now();
+        const deltaTime = current - this._before;
         this._before = current;
 
         this._seeds.forEach((fireworkSeed, index) => {
@@ -219,11 +224,11 @@ export default class Fireworksify {
                 fireworkSeed.velocityY -= GRAVITY * deltaTime + fireworkSeed.velocityY * ACCELERATION * deltaTime;
                 fireworkSeed.positionX += fireworkSeed.velocityX * deltaTime;
                 fireworkSeed.positionY -= fireworkSeed.velocityY * deltaTime;
-                fireworkSeed.el.style.left = fireworkSeed.positionX + 'px';
-                fireworkSeed.el.style.top = fireworkSeed.positionY + 'px';
+                fireworkSeed.el.style.left = `${fireworkSeed.positionX}px`;
+                fireworkSeed.el.style.top = `${fireworkSeed.positionY}px`;
             } else {
                 if (!fireworkSeed.peaked && fireworkSeed.seedConfig.explode) {
-                    this.newFireworkStar(fireworkSeed.positionX, fireworkSeed.positionY);                    
+                    this.newFireworkStar(fireworkSeed.positionX, fireworkSeed.positionY);
                 }
                 fireworkSeed.peaked = true;
 
@@ -232,8 +237,8 @@ export default class Fireworksify {
                     fireworkSeed.velocityY += GRAVITY * deltaTime + fireworkSeed.velocityY * ACCELERATION * deltaTime;
                     fireworkSeed.positionX += fireworkSeed.velocityX * deltaTime;
                     fireworkSeed.positionY += fireworkSeed.velocityY * deltaTime;
-                    fireworkSeed.el.style.left = fireworkSeed.positionX + 'px';
-                    fireworkSeed.el.style.top = fireworkSeed.positionY + 'px';
+                    fireworkSeed.el.style.left = `${fireworkSeed.positionX}px`;
+                    fireworkSeed.el.style.top = `${fireworkSeed.positionY}px`;
                 } else {
                     fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
                     this._seeds.splice(index, 1);
@@ -241,7 +246,6 @@ export default class Fireworksify {
                     fireworkSeed = null;
                 }
             }
-
             // Making sure we remove seeds if they are out of view.
             if (fireworkSeed !== null && fireworkSeed.peaked && fireworkSeed.positionY > window.innerHeight) {
                 fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
@@ -249,23 +253,23 @@ export default class Fireworksify {
             }
         });
 
-        this._particles.forEach((fireworkParticle, index) =>  {
+        this._particles.forEach((fireworkParticle, index) => {
             fireworkParticle.time -= deltaTime;
 
             if (fireworkParticle.time > 0) {
                 fireworkParticle.velocityX -= fireworkParticle.velocityX * ACCELERATION * deltaTime;
-                fireworkParticle.velocityY -= GRAVITY * deltaTime + fireworkParticle.velocityY * ACCELERATION * deltaTime;
+                fireworkParticle.velocityY -=
+                    GRAVITY * deltaTime + fireworkParticle.velocityY * ACCELERATION * deltaTime;
                 fireworkParticle.positionX += fireworkParticle.velocityX * deltaTime;
                 fireworkParticle.positionY -= fireworkParticle.velocityY * deltaTime;
-                fireworkParticle.el.style.left = fireworkParticle.positionX + 'px';
-                fireworkParticle.el.style.top = fireworkParticle.positionY + 'px';
+                fireworkParticle.el.style.left = `${fireworkParticle.positionX}px`;
+                fireworkParticle.el.style.top = `${fireworkParticle.positionY}px`;
             } else {
                 fireworkParticle.el.parentNode.removeChild(fireworkParticle.el);
                 this._particles.splice(index, 1);
 
                 fireworkParticle = null;
             }
-
             // Making sure we remove particles if they are out of view.
             if (fireworkParticle !== null && fireworkParticle.positionY > window.innerHeight) {
                 fireworkParticle.el.parentNode.removeChild(fireworkParticle.el);

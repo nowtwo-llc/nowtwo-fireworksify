@@ -10,4 +10,3 @@ eslint-report.html
 # Logs
 logs
 *.log
-npm-debug.log*
