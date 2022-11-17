@@ -41,7 +41,7 @@ class FireworkParticle {
     public positionY = 0;
 }
 
-export default class Fireworksify {
+export class Fireworksify {
     private _seeds: FireworkSeed[] = [];
     private _particles: FireworkParticle[] = [];
     private _boardEl: HTMLElement = null;
