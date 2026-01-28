@@ -1,15 +1,36 @@
 import './Fireworksify.css';
 
+// Initial speed of explosion particles radiating outward from the burst point
 const FIREWORK_PARTICLE_INITIAL_VELOCITY = 0.5;
+// Initial upward launch speed of a firework seed
 const FIREWORK_SEED_INITIAL_VELOCITY = 0.85;
+// How long (ms) a particle stays alive before being removed
 const FIREWORK_PARTICLE_INITIAL_TIMER_VALUE = 2500;
+// How long (ms) a seed travels upward before exploding
 const FIREWORK_SEED_INITIAL_TIMER_VALUE = 1000;
 
+// Air resistance factor — decelerates objects proportional to their velocity
 const ACCELERATION = 0.0005;
+// Gravitational pull — constant downward acceleration each frame
 const GRAVITY = 0.0005;
+// Random velocity dampening factor — each particle gets up to 30% speed reduction for variance
 const VELOCITY = 0.3;
 
-const DEFAULT_SEED = {
+/** Configuration for a single firework seed type. */
+interface SeedConfig {
+    explode: boolean;
+    destroy: boolean;
+    class: string;
+}
+
+/** Configuration options passed to the Fireworksify constructor. */
+interface FireworksifyConfig {
+    duration?: number;
+    showDefault?: boolean;
+    additionalSeeds?: SeedConfig[];
+}
+
+const DEFAULT_SEED: SeedConfig = {
     explode: true,
     destroy: true,
     class: 'firework-seed--default'
@@ -27,7 +48,7 @@ class FireworkSeed {
     public velocityY = 0;
     public positionX = 0;
     public positionY = 0;
-    public seedConfig: any = null;
+    public seedConfig: SeedConfig = null;
     public peaked = false;
 }
 
@@ -41,22 +62,31 @@ class FireworkParticle {
     public positionY = 0;
 }
 
+/**
+ * Fireworksify — a lightweight browser fireworks animation controller.
+ *
+ * Creates a full-viewport overlay and renders firework seeds that launch upward,
+ * explode into 72-particle starbursts, and fade out with simulated gravity and
+ * air resistance. Dispatches `he:fireworksify:start` and `he:fireworksify:stop`
+ * custom events on `document`.
+ */
 export class Fireworksify {
     private _seeds: FireworkSeed[] = [];
     private _particles: FireworkParticle[] = [];
     private _boardEl: HTMLElement = null;
 
     private _before: number = Date.now();
-    private _id: any = null;
+    // Handle for the 5ms animation loop interval
+    private _id: ReturnType<typeof setInterval> | null = null;
     private _domId = 1000;
 
-    private _availableSeeds: any[] = [];
+    private _availableSeeds: SeedConfig[] = [];
 
     // Setting the default to 10 seconds.
     private _duration = 10000;
-    private _timerId: any = null;
+    private _timerId: ReturnType<typeof setInterval> | null = null;
 
-    constructor(config: any) {
+    constructor(config: FireworksifyConfig) {
         this._boardEl = document.createElement('div');
         document.body.append(this._boardEl);
 
@@ -69,12 +99,23 @@ export class Fireworksify {
         if (config && Array.isArray(config.additionalSeeds) && config.additionalSeeds.length) {
             this._availableSeeds = this._availableSeeds.concat(config.additionalSeeds);
         }
+        // Animation loop running at ~200fps (5ms interval) for smooth physics simulation
         this._id = setInterval(() => {
             this.frame();
         }, 5);
     }
 
+    /**
+     * Start an automated fireworks display that launches seeds at random horizontal
+     * offsets from the viewport center. The display runs for the configured duration
+     * (default 10 seconds) and then stops automatically.
+     */
     public start(): void {
+        // Guard against multiple concurrent start() calls without clearing the previous timer
+        if (this._timerId !== null) {
+            clearInterval(this._timerId);
+        }
+
         const centerOffset = window.innerWidth / 4;
 
         const startEvent = new Event('he:fireworksify:start');
@@ -95,8 +136,32 @@ export class Fireworksify {
         this.initiateStop();
     }
 
+    /**
+     * Generate a single firework seed at the given coordinates.
+     * Useful for triggering fireworks at specific positions (e.g., on click).
+     */
     public generate(x: number, y: number): void {
         this.newFireworkSeed(x, y);
+    }
+
+    /**
+     * Tear down the fireworks instance: stop all timers, remove DOM elements,
+     * and clear internal arrays. The instance should not be reused after calling this.
+     */
+    public destroy(): void {
+        if (this._id !== null) {
+            clearInterval(this._id);
+            this._id = null;
+        }
+        if (this._timerId !== null) {
+            clearInterval(this._timerId);
+            this._timerId = null;
+        }
+        if (this._boardEl && this._boardEl.parentNode) {
+            this._boardEl.parentNode.removeChild(this._boardEl);
+        }
+        this._seeds = [];
+        this._particles = [];
     }
 
     private initiateStop(): void {
@@ -105,6 +170,7 @@ export class Fireworksify {
             document.dispatchEvent(stopEvent);
 
             clearInterval(this._timerId);
+            this._timerId = null;
         }, this._duration);
     }
 
@@ -127,35 +193,17 @@ export class Fireworksify {
             angle += 360;
         }
 
-        if (angle > 270) {
-            fireworkParticle.velocityX =
-                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
-            fireworkParticle.velocityY =
-                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
-        } else if (angle > 180) {
-            fireworkParticle.velocityX =
-                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
-            fireworkParticle.velocityY =
-                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
-        } else if (angle > 90) {
-            fireworkParticle.velocityX =
-                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
-            fireworkParticle.velocityY =
-                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
-        } else {
-            fireworkParticle.velocityX =
-                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
-            fireworkParticle.velocityY =
-                FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
-        }
+        // All quadrants use the same trigonometric projection — sin/cos handle sign automatically
+        fireworkParticle.velocityX =
+            FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+        fireworkParticle.velocityY =
+            FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+
         fireworkParticle.positionX = x;
         fireworkParticle.positionY = y;
         fireworkParticle.el.style.left = `${fireworkParticle.positionX}px`;
         fireworkParticle.el.style.top = `${fireworkParticle.positionY}px`;
 
-        if (this._particles === null) {
-            this._particles = [];
-        }
         this._particles.push(fireworkParticle);
 
         return fireworkParticle;
@@ -188,14 +236,15 @@ export class Fireworksify {
         fireworkSeed.el.style.left = `${fireworkSeed.positionX}px`;
         fireworkSeed.el.style.top = `${fireworkSeed.positionY}px`;
 
-        if (this._seeds === null) {
-            this._seeds = [];
-        }
         this._seeds.push(fireworkSeed);
 
         return fireworkSeed;
     }
 
+    /**
+     * Create a starburst of 72 particles (one every 5 degrees around a full 360° circle)
+     * at the given position, grouped inside a batch container for fade-out animation.
+     */
     private newFireworkStar(x: number, y: number) {
         const fireworkBatch = new FireworkBatch();
         fireworkBatch.el.setAttribute('class', 'firework-batch');
@@ -216,7 +265,9 @@ export class Fireworksify {
         const deltaTime = current - this._before;
         this._before = current;
 
-        this._seeds.forEach((fireworkSeed, index) => {
+        // Use filter() instead of forEach+splice to avoid skipping elements
+        // when mutating the array during iteration
+        this._seeds = this._seeds.filter((fireworkSeed) => {
             fireworkSeed.time -= deltaTime;
 
             if (fireworkSeed.time > 0) {
@@ -241,19 +292,18 @@ export class Fireworksify {
                     fireworkSeed.el.style.top = `${fireworkSeed.positionY}px`;
                 } else {
                     fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
-                    this._seeds.splice(index, 1);
-
-                    fireworkSeed = null;
+                    return false; // Remove from array
                 }
             }
-            // Making sure we remove seeds if they are out of view.
-            if (fireworkSeed !== null && fireworkSeed.peaked && fireworkSeed.positionY > window.innerHeight) {
+            // Remove seeds that have peaked and fallen out of the viewport
+            if (fireworkSeed.peaked && fireworkSeed.positionY > window.innerHeight) {
                 fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
-                this._seeds.splice(index, 1);
+                return false; // Remove from array
             }
+            return true; // Keep in array
         });
 
-        this._particles.forEach((fireworkParticle, index) => {
+        this._particles = this._particles.filter((fireworkParticle) => {
             fireworkParticle.time -= deltaTime;
 
             if (fireworkParticle.time > 0) {
@@ -266,17 +316,14 @@ export class Fireworksify {
                 fireworkParticle.el.style.top = `${fireworkParticle.positionY}px`;
             } else {
                 fireworkParticle.el.parentNode.removeChild(fireworkParticle.el);
-                this._particles.splice(index, 1);
-
-                fireworkParticle = null;
+                return false; // Remove from array
             }
-            // Making sure we remove particles if they are out of view.
-            if (fireworkParticle !== null && fireworkParticle.positionY > window.innerHeight) {
+            // Remove particles that have fallen out of the viewport
+            if (fireworkParticle.positionY > window.innerHeight) {
                 fireworkParticle.el.parentNode.removeChild(fireworkParticle.el);
-                this._particles.splice(index, 1);
-
-                fireworkParticle = null;
+                return false; // Remove from array
             }
+            return true; // Keep in array
         });
     }
 }
