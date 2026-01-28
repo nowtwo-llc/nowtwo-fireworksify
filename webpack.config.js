@@ -1,12 +1,9 @@
-const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const { CachedInputFileSystem, ResolverFactory } = require('enhanced-resolve');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const FileManagerPlugin = require('filemanager-webpack-plugin');
 
 const ENVIRONMENT = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
 const ENVIRONMENT_VARS = {
@@ -31,8 +28,10 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.css'],
         alias: {
-            '~': path.resolve('./node_modules')
-        }
+            '~': path.resolve('./node_modules'),
+            ...resolveAliases
+        },
+        symlinks: false
     },
     module: {
         rules: [
@@ -58,10 +57,6 @@ module.exports = {
             filename: ENVIRONMENT === 'production' ? 'fireworksify.min.css' : 'fireworksify.css'
         })
     ],
-    resolve: {
-        alias: resolveAliases,
-        symlinks: false
-    },
     watchOptions: {
         ignored: [
             'dist/**',
