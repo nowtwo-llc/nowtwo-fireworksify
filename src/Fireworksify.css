@@ -1,21 +1,43 @@
 @keyframes firework-animation {
-    0% {background-color: #ff8426;}
-    25% {background-color: #fffc84;}
-    50% {background-color: #ff83f4;}
-    75% {background-color: #83b6ff;}
-    100% {background-color: #ff8426;}
+    0% {
+        background-color: #ff8426;
+    }
+    25% {
+        background-color: #fffc84;
+    }
+    50% {
+        background-color: #ff83f4;
+    }
+    75% {
+        background-color: #83b6ff;
+    }
+    100% {
+        background-color: #ff8426;
+    }
 }
 
 @keyframes firework-seed-animation {
-    0% {background-color: #ff8426;}
-    25% {background-color: #fffc84;}
-    100% {background-color: #ff8426;}
+    0% {
+        background-color: #ff8426;
+    }
+    25% {
+        background-color: #fffc84;
+    }
+    100% {
+        background-color: #ff8426;
+    }
 }
 
 @keyframes firework-fade-animation {
-    0% {opacity: 1;}
-    50% {opacity: 1;}
-    100% {opacity: 0;}
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 .firework-batch {

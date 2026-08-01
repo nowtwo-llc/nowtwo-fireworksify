@@ -1,5 +1,3 @@
-import './Fireworksify.css';
-
 // Initial speed of explosion particles radiating outward from the burst point
 const FIREWORK_PARTICLE_INITIAL_VELOCITY = 0.5;
 // Initial upward launch speed of a firework seed
@@ -48,7 +46,7 @@ class FireworkSeed {
     public velocityY = 0;
     public positionX = 0;
     public positionY = 0;
-    public seedConfig: SeedConfig = null;
+    public seedConfig: SeedConfig = DEFAULT_SEED;
     public peaked = false;
 }
 
@@ -73,7 +71,7 @@ class FireworkParticle {
 export class Fireworksify {
     private _seeds: FireworkSeed[] = [];
     private _particles: FireworkParticle[] = [];
-    private _boardEl: HTMLElement = null;
+    private _boardEl: HTMLElement;
 
     private _before: number = Date.now();
     // Handle for the 5ms animation loop interval
@@ -86,7 +84,7 @@ export class Fireworksify {
     private _duration = 10000;
     private _timerId: ReturnType<typeof setInterval> | null = null;
 
-    constructor(config: FireworksifyConfig) {
+    constructor(config?: FireworksifyConfig | null) {
         this._boardEl = document.createElement('div');
         document.body.append(this._boardEl);
 
@@ -158,7 +156,7 @@ export class Fireworksify {
             this._timerId = null;
         }
         if (this._boardEl && this._boardEl.parentNode) {
-            this._boardEl.parentNode.removeChild(this._boardEl);
+            this._boardEl.parentNode?.removeChild(this._boardEl);
         }
         this._seeds = [];
         this._particles = [];
@@ -169,8 +167,10 @@ export class Fireworksify {
             const stopEvent = new Event('he:fireworksify:stop');
             document.dispatchEvent(stopEvent);
 
-            clearInterval(this._timerId);
-            this._timerId = null;
+            if (this._timerId !== null) {
+                clearInterval(this._timerId);
+                this._timerId = null;
+            }
         }, this._duration);
     }
 
@@ -210,7 +210,11 @@ export class Fireworksify {
     }
 
     private newFireworkSeed(x: number, y: number): FireworkSeed {
-        const seedConfig = this._availableSeeds[Math.floor(Math.random() * this._availableSeeds.length)];
+        // Fall back to the built-in seed when no seeds were configured, so that
+        // `new Fireworksify({ duration: 10 }).start()` works without extra setup.
+        const seedConfig = this._availableSeeds.length
+            ? this._availableSeeds[Math.floor(Math.random() * this._availableSeeds.length)]
+            : DEFAULT_SEED;
 
         const fireworkSeed = new FireworkSeed();
         fireworkSeed.id = this.getNextId();
@@ -291,13 +295,13 @@ export class Fireworksify {
                     fireworkSeed.el.style.left = `${fireworkSeed.positionX}px`;
                     fireworkSeed.el.style.top = `${fireworkSeed.positionY}px`;
                 } else {
-                    fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
+                    fireworkSeed.el.parentNode?.removeChild(fireworkSeed.el);
                     return false; // Remove from array
                 }
             }
             // Remove seeds that have peaked and fallen out of the viewport
             if (fireworkSeed.peaked && fireworkSeed.positionY > window.innerHeight) {
-                fireworkSeed.el.parentNode.removeChild(fireworkSeed.el);
+                fireworkSeed.el.parentNode?.removeChild(fireworkSeed.el);
                 return false; // Remove from array
             }
             return true; // Keep in array
@@ -315,12 +319,12 @@ export class Fireworksify {
                 fireworkParticle.el.style.left = `${fireworkParticle.positionX}px`;
                 fireworkParticle.el.style.top = `${fireworkParticle.positionY}px`;
             } else {
-                fireworkParticle.el.parentNode.removeChild(fireworkParticle.el);
+                fireworkParticle.el.parentNode?.removeChild(fireworkParticle.el);
                 return false; // Remove from array
             }
             // Remove particles that have fallen out of the viewport
             if (fireworkParticle.positionY > window.innerHeight) {
-                fireworkParticle.el.parentNode.removeChild(fireworkParticle.el);
+                fireworkParticle.el.parentNode?.removeChild(fireworkParticle.el);
                 return false; // Remove from array
             }
             return true; // Keep in array
