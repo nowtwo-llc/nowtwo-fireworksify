@@ -1,0 +1,16 @@
+// Declaration-only build. The webpack bundles disable ts-loader's declaration
+// output (three compilers would otherwise race to write the same .d.ts files),
+// so types are generated once from here into dist/types.
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "declaration": true,
+        "declarationMap": true,
+        "emitDeclarationOnly": true,
+        "outDir": "./dist/types",
+        "rootDir": "./src"
+    },
+    // Only the public module: src/bundle.ts exists purely to pull the
+    // stylesheet into the webpack graph and must not reach the declarations.
+    "include": ["./src/Fireworksify.ts"]
+}

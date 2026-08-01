@@ -5,16 +5,24 @@
         "declaration": true,
         "declarationMap": true,
         "esModuleInterop": true,
-        "lib": ["esnext", "dom"],
+        // `target: es5` and `moduleResolution: node` are deprecated in TS 6 and
+        // removed in TS 7. Both must be migrated before upgrading to TS 7.
+        "ignoreDeprecations": "6.0",
+        "lib": ["es2018", "dom"],
         "module": "esnext",
         "moduleResolution": "node",
         "noResolve": false,
-        "outDir": "./build",
         "removeComments": true,
-        "sourceMap": false,
+        "sourceMap": true,
         "target": "es5"
     },
+    // No outDir/rootDir here: webpack owns the bundle output and
+    // tsconfig.types.json owns declaration emit.
+    //
+    // Library sources only. The test suite and vitest.config.mts consume
+    // Vitest's types, which require modern module resolution and Node types
+    // that this ES5/node10 config cannot express — see tsconfig.test.json.
     "exclude": ["./node_modules"],
-    "include": ["./src", "./tests", "./example", "**.js"],
+    "include": ["./src"],
     "typeRoots": ["./node_modules/@types", "./src"]
 }
