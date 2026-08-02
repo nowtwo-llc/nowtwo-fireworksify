@@ -63,6 +63,7 @@
         "stylelint": "stylelint \"src/**/*.css\"",
         "test": "vitest run",
         "test:watch": "vitest",
+        "test:coverage": "vitest run --coverage",
         "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
         "update": "npm-check-updates -u --reject typescript,jsdom",
         "watch": "cross-env NODE_ENV=development webpack --progress --watch",
@@ -71,6 +72,7 @@
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@types/node": "^26.1.2",
+        "@vitest/coverage-v8": "^4.1.10",
         "cross-env": "^10.1.0",
         "css-loader": "^7.1.4",
         "css-minimizer-webpack-plugin": "^8.0.0",
