@@ -7,27 +7,42 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
+# npm is the registry consumers use. GitHub Packages is an internal backup
+# mirror. Both orgs are named "nowtwo-llc", so the same @nowtwo-llc/fireworksify
+# name publishes to both with no rewriting.
 jobs:
-  publish:
+  npm:
+    name: npm (public)
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Required for npm trusted publishing (OIDC). Without it the publish
+      # falls back to looking for a token and fails.
+      id-token: write
 
     steps:
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
-          registry-url: https://npm.pkg.github.com
-          scope: '@nowtwo-llc'
+          # Trusted publishing needs Node >= 22.14.0.
+          node-version: 22.x
+          registry-url: https://registry.npmjs.org
           cache: npm
+
+      # setup-node ships npm 10.x, but trusted publishing needs >= 11.5.1.
+      - name: Upgrade npm
+        run: |
+          npm install -g npm@latest
+          npm --version
 
       - name: Install dependencies
         run: npm ci
 
       # A tag that disagrees with package.json publishes a surprising version,
-      # and the registry will not let you take it back.
+      # and neither registry will let you take it back.
       - name: Verify tag matches package version
         run: |
           TAG_VERSION="${GITHUB_REF_NAME#v}"
@@ -47,8 +62,39 @@ jobs:
       - name: Test
         run: npm test
 
+      # No NODE_AUTH_TOKEN: the OIDC token from `id-token: write` authenticates
+      # against the trusted publisher configured on npmjs.com, and npm attaches
+      # build provenance automatically.
+      #
       # `prepublishOnly` runs the production build, so dist/ is always freshly
       # generated from the tagged source rather than whatever was on disk.
+      - name: Publish to npm
+        run: npm publish
+
+  github-packages:
+    name: GitHub Packages (internal backup)
+    runs-on: ubuntu-latest
+    # npm is the registry consumers use; only mirror to the internal backup
+    # once that publish has actually succeeded.
+    needs: npm
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22.x
+          registry-url: https://npm.pkg.github.com
+          scope: '@nowtwo-llc'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Publish to GitHub Packages
         run: npm publish
         env:

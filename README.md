@@ -11,25 +11,13 @@ Fireworksify adds something fun to your application for a very small footprint â
 
 ## Installing
 
-### From npm (GitHub Packages)
-
-This package is published to GitHub Packages under the `@nowtwo-llc` scope. Point the scope at the GitHub registry in an `.npmrc` next to your `package.json`:
-
-```ini
-@nowtwo-llc:registry=https://npm.pkg.github.com
-```
-
-GitHub Packages requires authentication even for public packages, so you also need a personal access token with the `read:packages` scope:
-
-```ini
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
-
-Then install:
+### From npm
 
 ```bash
 npm install @nowtwo-llc/fireworksify
 ```
+
+No registry configuration or authentication needed.
 
 ### From a script tag
 
