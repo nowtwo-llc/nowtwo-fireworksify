@@ -4,9 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Fireworksify is a lightweight (~2.5k gzipped) browser library that adds animated fireworks effects to websites. Standalone TypeScript, zero runtime dependencies, published as `@nowtwo-llc/fireworksify` to GitHub Packages by NowTwo LLC.
+Fireworksify is a lightweight (~2.5k gzipped) browser library that adds animated fireworks effects to websites. Standalone TypeScript, zero runtime dependencies, owned by NowTwo LLC.
 
-The repo is being prepared to go public. All naming, metadata, copyright and documentation must stay under NowTwo LLC and the `@nowtwo-llc` scope; do not reintroduce references to prior owners of this code.
+Published as `@nowtwo-llc/fireworksify` to **two registries**:
+
+| Registry | Role |
+| --- | --- |
+| npm (`registry.npmjs.org`) | Public. This is what consumers install and the only one the README documents. |
+| GitHub Packages | Internal backup mirror. Not user-facing — do not document it in the README. |
+
+Both the npm org and the GitHub org are named `nowtwo-llc`, so one package name publishes to both with no rewriting.
+
+Publishing to npm does **not** create a GitHub Package; the registries are unrelated, which is why the mirror job exists.
+
+The repo is being prepared to go public. All naming, metadata, copyright and documentation must stay under NowTwo LLC; do not reintroduce references to prior owners of this code.
 
 ## Build & Development Commands
 
@@ -96,5 +107,5 @@ Assertions are chai-style (`expect(x).to.equal(y)`), which Vitest supports nativ
 ## CI
 
 - `ci.yml` — typecheck, lint, test, build, `npm pack --dry-run` on pushes and PRs to `main`.
-- `publish.yml` — on `v*` tags; verifies the tag matches `package.json` before publishing to GitHub Packages.
+- `publish.yml` — on `v*` tags. Verifies the tag matches `package.json`, then publishes in two jobs: npm first via OIDC trusted publishing (no token; needs `id-token: write`, Node >= 22.14.0 and npm >= 11.5.1, so it upgrades npm because setup-node ships 10.x), then the GitHub Packages backup with `GITHUB_TOKEN`. The mirror job `needs: npm`, so a failed npm publish stops it.
 - `pages.yml` — deploys `example/` plus `dist/` to GitHub Pages. The demo is served at `/example/` so its `../dist/...` paths resolve the same way they do locally.
