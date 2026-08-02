@@ -12,7 +12,7 @@ Use GitHub's private vulnerability reporting instead — go to the
 [Security tab](https://github.com/nowtwo-llc/nowtwo-fireworksify/security/advisories/new)
 and open a draft advisory. That keeps the report private until a fix ships.
 
-If you cannot use that, email <rvelton@nowtwo.io>.
+If you cannot use that, email <support@nowtwo.io>.
 
 Please include what the issue is, how to reproduce it, and which version you tested.
 We aim to acknowledge reports within a few business days.

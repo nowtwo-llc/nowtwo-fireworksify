@@ -1,41 +1,93 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-        <title>Fireworksify Example</title>
+        <title>Fireworksify — fireworks for your website</title>
+        <meta
+            name="description"
+            content="A lightweight, dependency-free library that sets off animated fireworks across your website."
+        />
+
+        <link rel="stylesheet" href="./demo.css" />
         <style>
-            html, body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                height: 100%;
-                background-color: #000;
+            /* Fireworksify's identity, taken from the library's own keyframes. */
+            :root {
+                --nt-accent: #ff8426;
+                --nt-accent-ink: #26120a;
             }
-            pre {
-                margin: 0;
-                padding: 0;
-            }
-            a, a:hover, a:visited, a:active {
-                color: white;
-            }
+
+            /* The custom seed used in the demo below. */
             .hedgie-stunna-shades {
                 width: 100px;
                 height: 124px;
-                background-image: url('./images/mini-hedgie-stunna.png');
+                background-image: url("./images/mini-hedgie-stunna.png");
+                background-size: contain;
+                background-repeat: no-repeat;
             }
         </style>
+
+        <link rel="stylesheet" href="../dist/fireworksify.min.css" />
     </head>
     <body>
-        <pre>
-            <br />
-            <br />
-            <a href="javascript:;" onclick="runDisplay();">Run Display</a>
-            <a href="javascript:;" onclick="launchOne();">Fire One</a>
-        </pre>
+        <main class="nt-page">
+            <h1 class="nt-title">fireworks<em>ify</em></h1>
+            <p class="nt-lede">
+                The best way to get fireworks to explode all over a website. No canvas, no dependencies — just DOM
+                elements and CSS animation.
+            </p>
 
-        <link rel="stylesheet" type="text/css" href="../dist/fireworksify.min.css" media="all"/>
+            <ul class="nt-meta">
+                <li>v3.0.1</li>
+                <li>~2.5k gzipped</li>
+                <li>0 dependencies</li>
+                <li>MIT</li>
+            </ul>
+
+            <section class="nt-section">
+                <h2 class="nt-label">Try it</h2>
+                <div class="nt-controls">
+                    <button id="run-display" type="button" class="nt-trigger">Launch the show</button>
+                    <button id="launch-one" type="button" class="nt-btn">Fire one</button>
+                    <button id="stop" type="button" class="nt-btn">Stop</button>
+                </div>
+                <p id="status" class="nt-status" role="status"></p>
+                <p class="nt-note">The show runs for 10 seconds, then stops on its own.</p>
+            </section>
+
+            <section class="nt-section">
+                <h2 class="nt-label">Install</h2>
+                <pre class="nt-code"><code>npm install @nowtwo-llc/fireworksify</code></pre>
+            </section>
+
+            <section class="nt-section">
+                <h2 class="nt-label">Use</h2>
+                <pre class="nt-code"><code>import { Fireworksify } from '@nowtwo-llc/fireworksify';
+import '@nowtwo-llc/fireworksify/style.css';
+
+const fireworksify = new Fireworksify({ duration: 10 });
+fireworksify.start();</code></pre>
+                <p class="nt-note">
+                    Fire a single one at any coordinates with <code>generate(x, y)</code>, and tear everything down with
+                    <code>destroy()</code>.
+                </p>
+            </section>
+
+            <section class="nt-section">
+                <h2 class="nt-label">Events</h2>
+                <ul class="nt-list">
+                    <li><strong>he:fireworksify:start</strong> — a timed display began</li>
+                    <li><strong>he:fireworksify:stop</strong> — a timed display finished</li>
+                </ul>
+                <p class="nt-note">Both are dispatched on <code>document</code>. This page listens to them for the status line above.</p>
+            </section>
+
+            <footer class="nt-footer">
+                <p>MIT licensed · <a href="https://github.com/nowtwo-llc/nowtwo-fireworksify">Source on GitHub</a></p>
+                <p>Maintained by <a href="https://www.nowtwo.io/">NowTwo LLC</a>.</p>
+            </footer>
+        </main>
+
         <script src="../dist/fireworksify.min.js"></script>
         <script src="./main.js"></script>
     </body>
