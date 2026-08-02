@@ -34,8 +34,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Runs the suite with coverage so the thresholds in vitest.config.mts
+      # are actually enforced; a plain `npm test` would skip them entirely.
       - name: Test
-        run: npm test
+        run: npm run test:coverage
 
       - name: Build
         run: npm run build:prod
