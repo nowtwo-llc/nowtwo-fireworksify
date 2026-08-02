@@ -107,5 +107,10 @@ Assertions are chai-style (`expect(x).to.equal(y)`), which Vitest supports nativ
 ## CI
 
 - `ci.yml` — typecheck, lint, test, build, `npm pack --dry-run` on pushes and PRs to `main`.
-- `publish.yml` — on `v*` tags. Verifies the tag matches `package.json`, then publishes in two jobs: npm first via OIDC trusted publishing (no token; needs `id-token: write`, Node >= 22.14.0 and npm >= 11.5.1, so it upgrades npm because setup-node ships 10.x), then the GitHub Packages backup with `GITHUB_TOKEN`. The mirror job `needs: npm`, so a failed npm publish stops it.
+- `publish.yml` — on `v*` tags. Verifies the tag matches `package.json`, then publishes in two jobs: npm first via OIDC trusted publishing (no token; needs `id-token: write`, Node >= 22.14.0 and npm >= 11.5.1, so it upgrades npm because setup-node ships 10.x), then the GitHub Packages backup with `GITHUB_TOKEN`. The mirror job `needs: npm`, so a failed or unapproved npm publish stops it.
+
+Two things in the workflows are security controls, not style — do not "tidy" them away:
+
+- **The npm job sets `environment: npm-publish`.** That environment carries required reviewers, so a `v*` tag queues a release for approval instead of publishing immediately. The name must stay identical to the Environment field on the npm trusted publisher; GitHub puts it in the OIDC claim and npm rejects a mismatch.
+- **Every action is pinned to a full commit SHA** with the version in a trailing comment. Tags can be force-moved by a compromised action repo; SHAs cannot. Dependabot (`.github/dependabot.yml`) updates the pins. Never replace a SHA with `@v5` to make a diff cleaner.
 - `pages.yml` — deploys `example/` plus `dist/` to GitHub Pages. The demo is served at `/example/` so its `../dist/...` paths resolve the same way they do locally.
