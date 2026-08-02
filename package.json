@@ -2,7 +2,7 @@
     "name": "@nowtwo-llc/fireworksify",
     "version": "3.0.1",
     "description": "The best way to get fireworks to explode all over a website.",
-    "author": "NowTwo LLC (https://www.nowtwo.io/)",
+    "author": "NowTwo LLC <support@nowtwo.io> (https://www.nowtwo.io/)",
     "license": "MIT",
     "homepage": "https://github.com/nowtwo-llc/nowtwo-fireworksify#readme",
     "repository": {
@@ -64,8 +64,9 @@
         "test": "vitest run",
         "test:watch": "vitest",
         "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
-        "update": "npm-check-updates -u",
-        "watch": "cross-env NODE_ENV=development webpack --progress --watch"
+        "update": "npm-check-updates -u --reject typescript,jsdom",
+        "watch": "cross-env NODE_ENV=development webpack --progress --watch",
+        "update:check": "npm-check-updates"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

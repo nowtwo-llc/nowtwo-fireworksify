@@ -55,15 +55,11 @@ export default tseslint.config(
     },
 
     // The demo page loads the UMD bundle from a script tag, so Fireworksify
-    // arrives as a browser global rather than an import, and its handlers are
-    // referenced from inline onclick attributes rather than from JS.
+    // arrives as a browser global rather than an import.
     {
         files: ['example/**/*.js'],
         languageOptions: {
             globals: { ...globals.browser, Fireworksify: 'readonly' }
-        },
-        rules: {
-            '@typescript-eslint/no-unused-vars': 'off'
         }
     },
 
