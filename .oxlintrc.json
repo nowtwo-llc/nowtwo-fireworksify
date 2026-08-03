@@ -6,9 +6,7 @@
         "es2022": true
     },
     "categories": {
-        "correctness": "error",
-        "suspicious": "warn",
-        "perf": "warn"
+        "correctness": "error"
     },
     "rules": {
         "max-classes-per-file": ["error", 12],
@@ -21,7 +19,9 @@
     "overrides": [
         {
             "files": ["*.js", "*.cjs", "*.mjs"],
-            "env": { "node": true }
+            "env": {
+                "node": true
+            }
         },
         {
             "files": ["tests/**/*.ts"],
