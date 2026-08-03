@@ -12,7 +12,7 @@
     // from the same events a real integration would.
     document.addEventListener('he:fireworksify:start', function () {
         running = true;
-        setStatus('Running — 10 seconds.');
+        setStatus('Running — ' + document.getElementById('duration').value + ' seconds.');
     });
 
     document.addEventListener('he:fireworksify:stop', function () {
@@ -20,22 +20,39 @@
         setStatus('Finished.');
     });
 
+    // Config is read by the constructor, so any settings change means a new
+    // instance rather than mutating the live one.
     function create() {
+        // A custom seed exists only because there is an entry in
+        // additionalSeeds — there is no separate flag for it. `class` is the
+        // whole styling hook: the artwork lives in the page's own CSS.
+        var additionalSeeds = document.getElementById('use-custom').checked
+            ? [
+                  {
+                      explode: document.getElementById('seed-explode').checked,
+                      destroy: document.getElementById('seed-destroy').checked,
+                      class: 'hedgie-stunna-shades'
+                  }
+              ]
+            : [];
+
         return new Fireworksify({
-            duration: 10,
-            showDefault: true,
-            additionalSeeds: [
-                {
-                    explode: true,
-                    destroy: false,
-                    class: 'hedgie-stunna-shades'
-                }
-            ]
+            duration: Number(document.getElementById('duration').value),
+            showDefault: document.getElementById('show-default').checked,
+            additionalSeeds: additionalSeeds
         });
     }
 
-    window.addEventListener('load', function () {
+    function rebuild() {
+        if (fireworksify) {
+            fireworksify.destroy();
+        }
         fireworksify = create();
+        running = false;
+    }
+
+    window.addEventListener('load', function () {
+        rebuild();
 
         document.getElementById('run-display').addEventListener('click', function () {
             if (running) {
@@ -59,10 +76,15 @@
         document.getElementById('stop').addEventListener('click', function () {
             // destroy() tears down the timers and the container, so the demo
             // builds a fresh instance to stay interactive.
-            fireworksify.destroy();
-            fireworksify = create();
-            running = false;
+            rebuild();
             setStatus('Stopped.');
+        });
+
+        ['duration', 'show-default', 'use-custom', 'seed-explode', 'seed-destroy'].forEach(function (id) {
+            document.getElementById(id).addEventListener('change', function () {
+                rebuild();
+                setStatus('Settings applied — rebuilt the instance.');
+            });
         });
     });
 })();

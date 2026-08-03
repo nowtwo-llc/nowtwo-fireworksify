@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
@@ -31,7 +31,7 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      # lint:check, not lint: `npm run lint` runs eslint --fix, which in CI
+      # lint:check, not lint: `npm run lint` autofixes, which in CI
       # would quietly repair a violation and report success on code that was
       # never actually clean.
       - name: Lint

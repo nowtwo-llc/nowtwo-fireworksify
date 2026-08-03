@@ -21,22 +21,21 @@ const resolve = {
     symlinks: false
 };
 
-// Declarations are emitted once by `npm run build:types`. Without this the three
-// production compilers would each race to write the same .d.ts files.
+// esbuild-loader rather than ts-loader: TypeScript 7 is the native Go port and
+// exposes no JS compiler API, so ts-loader (which calls createProgram and
+// createLanguageService) cannot run against it at all.
+//
+// esbuild only strips types — it does not type-check, and it never emits
+// declarations. Both of those are `tsc`'s job here: `npm run typecheck` and
+// `npm run build:types`. CI runs typecheck before build, so the gate still
+// holds, but a bare `npm run build` will no longer fail on a type error.
 const tsRule = {
     test: /\.ts$/,
-    use: {
-        loader: 'ts-loader',
-        options: {
-            // tsconfig.json also covers tests and the demo so the editor and
-            // ESLint can see them. The bundles must only compile what the
-            // entry actually reaches, or a test-only type error fails the build.
-            onlyCompileBundledFiles: true,
-            compilerOptions: {
-                declaration: false,
-                declarationMap: false
-            }
-        }
+    loader: 'esbuild-loader',
+    options: {
+        loader: 'ts',
+        // Keep in step with `target` in tsconfig.json and BUILD_TARGET below.
+        target: 'es2020'
     }
 };
 

@@ -144,7 +144,7 @@ npm run typecheck    # tsc on the library and the tests
 npm run lint         # ESLint + Stylelint
 ```
 
-To try the demo locally, run `npm run build:prod` and open `example/index.html` — it loads the freshly built files from `../dist/`.
+To try the demo locally, run `npm run demo` — it builds and serves at <http://localhost:5050> (set `PORT=…` to change it). The server mirrors the deployed layout, so the page's relative `../dist/` paths resolve exactly as they do on GitHub Pages.
 
 ## Authors
 

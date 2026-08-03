@@ -29,9 +29,12 @@ npm run watch           # Development build with file watching
 npm test                # Vitest suite (jsdom)
 npm run test:watch      # Vitest in watch mode
 npm run typecheck       # tsc over the library and the tests
-npm run lint            # ESLint + Stylelint
-npm run eslint          # ESLint with autofix
+npm run lint            # oxlint + Prettier + Stylelint, with fixes
+npm run lint:check      # same, no fixes — what CI runs
+npm run format          # Prettier
+npm run oxlint          # oxlint with autofix
 npm run stylelint       # Stylelint
+npm run demo            # Build, then serve the demo at http://localhost:5050
 npm run clean           # Remove build/ and dist/
 ```
 
@@ -70,25 +73,27 @@ The CSS is always a separate file — it is never inlined into the JavaScript, s
 
 ## Build System
 
-Webpack 5 with `ts-loader`. `webpack.config.js` exports a single UMD config in development and an array of three configs (UMD, ESM, CJS) in production.
+Webpack 5 with **esbuild-loader**. `webpack.config.js` exports a single UMD config in development and an array of three configs (UMD, ESM, CJS) in production.
 
 Things that are load-bearing and easy to break:
 
-- **`target: ['web', 'es5']` plus an explicit `output.environment`.** Without these, webpack's own runtime emits `const`/`let` and silently breaks the ES5 promise. The ESM config needs `module: true` in its environment, so it sets the ES5 flags individually rather than using the `es5` target.
+- **esbuild-loader, not ts-loader.** TypeScript 7 is the native Go port and exposes no JS compiler API, so ts-loader (which calls `createProgram`/`createLanguageService`) cannot run against it at all. esbuild only strips types — it never type-checks and never emits declarations.
+- **ES2020 lives in three places** and they must move together: `target` in `tsconfig.json`, `target` on the esbuild-loader rule, and `BUILD_TARGET` in `webpack.config.js`. Webpack's runtime wrapper follows the last one, so a mismatch silently ships syntax the tsconfig promised not to.
 - **The CJS config uses `src/Fireworksify.ts` as its entry, not `src/bundle.ts`.** Bundling the CSS import there pulls in webpack's automatic-publicPath runtime, which throws outside a browser and breaks `require()` at load time.
-- **`onlyCompileBundledFiles: true` on ts-loader.** `tsconfig.json` is scoped to `src`, but this keeps the bundle compile limited to what the entry reaches.
-- **Declarations are emitted once** by `tsc -p tsconfig.types.json`; ts-loader has `declaration: false` so three compilers don't race to write the same files.
+- **Declarations are emitted once** by `tsc -p tsconfig.types.json`. esbuild cannot produce them.
 - Cleaning is done by the npm scripts (`rm -rf`), not a webpack plugin — three configs writing to one directory would delete each other's output.
 
 ## TypeScript setup
 
-Three configs, deliberately:
+Running **TypeScript 7** (the native Go port). Three configs:
 
-- `tsconfig.json` — the library. ES5 target, node10 resolution, strict (TS 6 default). Covers `src` only.
-- `tsconfig.test.json` — the tests and `vitest.config.mts`. Modern target and `bundler` resolution, because Vitest's declarations use private identifiers and `exports` subpaths that the ES5/node10 config cannot resolve.
+- `tsconfig.json` — the library. ES2020 target, `bundler` resolution, strict. Covers `src` only.
+- `tsconfig.test.json` — the tests and `vitest.config.mts`. Adds Node types and `noEmit`; target and resolution come from the base.
 - `tsconfig.types.json` — declaration-only emit, `src/Fireworksify.ts` alone.
 
-**TypeScript is pinned to `^6.0.3` on purpose.** TypeScript 7 is the native Go port; it does not expose the JS compiler API, so `ts-loader` (which calls `createProgram`/`createLanguageService`) breaks entirely. Before any TS 7 move, `target: es5` and `moduleResolution: node` must be migrated — `ignoreDeprecations: "6.0"` stops working there.
+`tsc` does two jobs here and both are required: `npm run typecheck` is the **only** type gate (esbuild does not check types, so `npm run build` will happily bundle broken code), and `npm run build:types` is the only source of `.d.ts` files.
+
+Do not reintroduce a second TypeScript via the `@typescript/typescript6` shim. It works, but two packages then ship a `tsc` binary and `node_modules/.bin/tsc` resolves non-deterministically by install order — a typecheck that silently runs the wrong compiler.
 
 ## Testing
 
@@ -96,12 +101,12 @@ Vitest on jsdom. The suite imports from `src/`, so no build is needed to run tes
 
 The library runs on a 5ms `setInterval` and `Date.now()` deltas, so tests use `vi.useFakeTimers()` and advance time explicitly. Never add real-time waits — the Karma suite this replaced took ~20s for the same 38 tests.
 
-Assertions are chai-style (`expect(x).to.equal(y)`), which Vitest supports natively since its `expect` is built on chai. `@typescript-eslint/no-unused-expressions` is disabled for `tests/**` because those assertions are bare expressions.
+Assertions are chai-style (`expect(x).to.equal(y)`), which Vitest supports natively since its `expect` is built on chai. `no-unused-expressions` is disabled for `tests/**` because those assertions are bare expressions.
 
 ## Code Style
 
 - Prettier: 120 char width, 4-space indent, single quotes, no trailing commas, always arrow parens.
-- ESLint flat config (`eslint.config.mjs`) using `typescript-eslint` with type-checked rules, plus `globals`. There is no `.eslintrc` — ESLint 10 removed support for it.
+- **oxlint** (`.oxlintrc.json`) rather than ESLint. typescript-eslint hard-refuses TypeScript 7 at runtime, and ESLint's own parser cannot read TypeScript without it; oxlint parses TS natively in Rust. The trade-off is no type-aware rules (`no-floating-promises` and friends) — `strict` under `tsc` carries that weight now.
 - Stylelint via `stylelint-prettier`. Note that Stylelint 15/16 removed the stylistic rules; don't re-add rules like `media-feature-colon-space-after` — Prettier owns formatting.
 
 ## CI

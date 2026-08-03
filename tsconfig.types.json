@@ -1,6 +1,5 @@
-// Declaration-only build. The webpack bundles disable ts-loader's declaration
-// output (three compilers would otherwise race to write the same .d.ts files),
-// so types are generated once from here into dist/types.
+// Declaration-only build. esbuild-loader strips types without ever emitting
+// declarations, so `tsc` produces them once from here into dist/types.
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {

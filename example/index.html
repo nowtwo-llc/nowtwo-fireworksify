@@ -52,7 +52,36 @@
                     <button id="stop" type="button" class="nt-btn">Stop</button>
                 </div>
                 <p id="status" class="nt-status" role="status"></p>
-                <p class="nt-note">The show runs for 10 seconds, then stops on its own.</p>
+                <p class="nt-note">A show runs for the configured duration, then stops on its own.</p>
+            </section>
+
+            <section class="nt-section">
+                <h2 class="nt-label">Settings</h2>
+                <div class="nt-options">
+                    <label>
+                        Duration
+                        <select id="duration">
+                            <option value="5">5s</option>
+                            <option value="10" selected>10s</option>
+                            <option value="20">20s</option>
+                        </select>
+                    </label>
+                    <label><input id="show-default" type="checkbox" checked /> Built-in seed</label>
+                    <label><input id="use-custom" type="checkbox" checked /> Custom seed</label>
+                    <label><input id="seed-explode" type="checkbox" checked /> Custom seed explodes</label>
+                    <label><input id="seed-destroy" type="checkbox" /> Custom seed is destroyed at apex</label>
+                </div>
+                <p class="nt-note">
+                    These are the constructor options, applied when the instance is built — so changing one rebuilds it.
+                    <strong>Built-in seed</strong> is <code>showDefault</code>; <strong>custom seed</strong> adds an entry
+                    to <code>additionalSeeds</code>, which is the only way a custom seed exists. Turn off
+                    <strong>explodes</strong> and the hedgehog arcs without bursting; turn on
+                    <strong>destroyed at apex</strong> and it vanishes at the top instead of falling back down.
+                </p>
+                <p class="nt-note">
+                    Turn both seeds off and the library falls back to the built-in one rather than throwing — every
+                    launch needs something to launch.
+                </p>
             </section>
 
             <section class="nt-section">

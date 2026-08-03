@@ -19,7 +19,7 @@ npm run watch        # rebuild ./build on change
 npm run test:watch   # re-run the suite on change
 ```
 
-To see a change in a real browser, run `npm run build:prod` and open `example/index.html`. It loads the built files from `../dist/`, which is the same layout the demo is deployed with.
+To see a change in a real browser, run `npm run demo`. It builds and serves at <http://localhost:5050> (`PORT=…` to change it), mirroring the deployed layout so the page's relative `../dist/` paths resolve exactly as they do on GitHub Pages. Opening `example/index.html` directly works too, but only after a build.
 
 ## Before opening a pull request
 
@@ -32,13 +32,14 @@ npm test
 npm run build:prod
 ```
 
-`npm run lint` autofixes what it can. Formatting is Prettier's job via `eslint-plugin-prettier` and `stylelint-prettier` — please don't hand-format around it.
+`npm run lint` autofixes what it can. Formatting is Prettier's job — run `npm run format` rather than hand-formatting around it. CSS formatting goes through `stylelint-prettier`.
 
 ## Conventions
 
 - **Source lives in one file.** `src/Fireworksify.ts` holds the whole library; `src/bundle.ts` exists only to pull the stylesheet into the webpack graph and must stay out of the generated declarations.
-- **The library is strict-mode TypeScript.** `tsconfig.json` targets ES5 with node10 module resolution because it ships to browsers. The tests type-check under `tsconfig.test.json`, which uses a modern target and resolver for Vitest's types.
-- **ES5 output is deliberate.** `webpack.config.js` pins `target: ['web', 'es5']` and an explicit `output.environment` so webpack's own runtime cannot introduce `const`/`let`/arrow functions. If you change the target, change it in both the tsconfig and the webpack config.
+- **The library is strict-mode TypeScript 7.** `tsconfig.json` targets ES2020 with `bundler` module resolution. The tests type-check under `tsconfig.test.json`, which only adds Node types and `noEmit`.
+- **ES2020 is set in three places** and they must move together: `target` in `tsconfig.json`, `target` on the esbuild-loader rule, and `BUILD_TARGET` in `webpack.config.js`. Webpack's own runtime wrapper follows the last one, so a mismatch silently ships syntax the tsconfig promised not to.
+- **esbuild does not type-check.** It only strips types, so `npm run build` will not fail on a type error — `npm run typecheck` is the gate, and CI runs it before building.
 - **Tests run on jsdom with fake timers.** The library is driven by a 5ms `setInterval` and `Date.now()` deltas, so tests advance time with `vi.advanceTimersByTime()` rather than waiting.
 
 ## Releasing
