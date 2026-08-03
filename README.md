@@ -129,7 +129,7 @@ document.addEventListener('he:fireworksify:start', function () {
 
 ## Browser support
 
-The bundles are compiled to ES5, including the webpack runtime, so they run in any browser that supports CSS animations.
+The bundles are compiled to ES2020, including the webpack runtime — Chrome 80+, Edge 80+, Firefox 72+, Safari 13.1+, and every browser released since. If you support older browsers than that, downlevel it alongside the rest of your application rather than relying on the package to do it for you.
 
 ## Development
 

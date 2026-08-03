@@ -1,19 +1,15 @@
 // Test-side type checking.
 //
-// The library itself targets ES5 with node10 module resolution, but Vitest's
-// declarations use private identifiers and package `exports` subpaths. Those
-// need a modern target and resolver, so the tests type-check under their own
-// config rather than loosening the shipped library settings.
+// The library config is emit-oriented and covers src only. The tests need Node
+// types (Vitest's declarations reference node: builtins) and must not emit, so
+// they type-check under their own config rather than loosening the shipped
+// library settings. Target and module resolution now come from the base.
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "declaration": false,
         "declarationMap": false,
-        "lib": ["es2022", "dom"],
-        "module": "esnext",
-        "moduleResolution": "bundler",
         "noEmit": true,
-        "target": "es2022",
         "types": ["node"]
     },
     "include": ["./tests", "./vitest.config.mts"]

@@ -31,8 +31,11 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      # lint:check, not lint: `npm run lint` runs eslint --fix, which in CI
+      # would quietly repair a violation and report success on code that was
+      # never actually clean.
       - name: Lint
-        run: npm run lint
+        run: npm run lint:check
 
       # Runs the suite with coverage so the thresholds in vitest.config.mts
       # are actually enforced; a plain `npm test` would skip them entirely.

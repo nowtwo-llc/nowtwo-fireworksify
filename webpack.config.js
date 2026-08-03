@@ -53,17 +53,10 @@ const cssRule = {
 const BUNDLE_ENTRY = './src/bundle.ts';
 const MODULE_ENTRY = './src/Fireworksify.ts';
 
-// Webpack emits its own runtime wrapper around our bundle. Without an explicit
-// ES5 environment it uses const/let, which would contradict the `target: es5`
-// this library compiles to.
-const ES5_ENVIRONMENT = {
-    arrowFunction: false,
-    const: false,
-    destructuring: false,
-    forOf: false,
-    optionalChaining: false,
-    templateLiteral: false
-};
+// Keep this in step with `target` in tsconfig.json. Webpack emits its own
+// runtime wrapper around the bundle, and it uses whatever syntax this allows —
+// so a mismatch here silently ships syntax the tsconfig promised not to.
+const BUILD_TARGET = ['web', 'es2020'];
 
 const baseConfig = {
     entry: BUNDLE_ENTRY,
@@ -89,7 +82,7 @@ const productionPlugins = () => [
 const umdConfig = {
     ...baseConfig,
     name: 'umd',
-    target: ['web', 'es5'],
+    target: BUILD_TARGET,
     output: {
         path: BUILD_DIR,
         libraryTarget: 'umd',
@@ -119,13 +112,14 @@ const umdConfig = {
 const esmConfig = {
     ...baseConfig,
     name: 'esm',
-    target: 'web',
+    target: BUILD_TARGET,
     experiments: { outputModule: true },
     output: {
         path: BUILD_DIR,
         filename: 'fireworksify.mjs',
         library: { type: 'module' },
-        environment: { ...ES5_ENVIRONMENT, module: true, dynamicImport: true }
+        // The es2020 target alone does not enable module output.
+        environment: { module: true, dynamicImport: true }
     },
     plugins: [new MiniCssExtractPlugin({ filename: 'fireworksify.css' }), ...productionPlugins()],
     optimization: { minimize: false }
@@ -139,12 +133,11 @@ const cjsConfig = {
     ...baseConfig,
     name: 'cjs',
     entry: MODULE_ENTRY,
-    target: ['web', 'es5'],
+    target: BUILD_TARGET,
     output: {
         path: BUILD_DIR,
         filename: 'fireworksify.cjs',
-        library: { type: 'commonjs2' },
-        environment: ES5_ENVIRONMENT
+        library: { type: 'commonjs2' }
     },
     module: { rules: [tsRule] },
     plugins: productionPlugins(),

@@ -2,6 +2,15 @@
     "name": "@nowtwo-llc/fireworksify",
     "version": "3.0.1",
     "description": "The best way to get fireworks to explode all over a website.",
+    "keywords": [
+        "fireworks",
+        "animation",
+        "effects",
+        "browser",
+        "dom",
+        "typescript",
+        "celebration"
+    ],
     "author": "NowTwo LLC <support@nowtwo.io> (https://www.nowtwo.io/)",
     "license": "MIT",
     "homepage": "https://github.com/nowtwo-llc/nowtwo-fireworksify#readme",
@@ -12,15 +21,6 @@
     "bugs": {
         "url": "https://github.com/nowtwo-llc/nowtwo-fireworksify/issues"
     },
-    "keywords": [
-        "fireworks",
-        "animation",
-        "effects",
-        "browser",
-        "dom",
-        "typescript",
-        "celebration"
-    ],
     "main": "./dist/fireworksify.cjs",
     "module": "./dist/fireworksify.mjs",
     "types": "./dist/types/Fireworksify.d.ts",
@@ -43,11 +43,11 @@
     "files": [
         "dist/"
     ],
-    "publishConfig": {
-        "access": "public"
-    },
     "engines": {
         "node": ">=20"
+    },
+    "publishConfig": {
+        "access": "public"
     },
     "scripts": {
         "build": "npm run build:prod",
@@ -59,15 +59,17 @@
         "eslint": "eslint --fix --cache --color .",
         "eslint:format": "prettier --write \"src/**/*.{ts,css}\" \"*.{js,mjs,json}\" && eslint --fix .",
         "lint": "npm run eslint && npm run stylelint",
+        "lint:check": "eslint --color --max-warnings=0 . && npm run stylelint",
+        "lint:fix": "npm run eslint && npm run stylelint",
         "prepublishOnly": "npm run build:prod",
         "stylelint": "stylelint \"src/**/*.css\"",
         "test": "vitest run",
-        "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
+        "test:watch": "vitest",
         "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
         "update": "npm-check-updates -u --reject typescript,jsdom",
-        "watch": "cross-env NODE_ENV=development webpack --progress --watch",
-        "update:check": "npm-check-updates"
+        "update:check": "npm-check-updates",
+        "watch": "cross-env NODE_ENV=development webpack --progress --watch"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",

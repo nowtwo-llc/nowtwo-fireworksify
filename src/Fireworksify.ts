@@ -186,18 +186,22 @@ export class Fireworksify {
         fireworkParticle.el.setAttribute('class', 'firework-particle');
         fireworkParticle.time = FIREWORK_PARTICLE_INITIAL_TIMER_VALUE;
 
-        while (angle > 360) {
-            angle -= 360;
+        // Normalised into a local instead of reassigning the parameter, so the
+        // value the caller passed stays intact for debugging.
+        let normalisedAngle = angle;
+        while (normalisedAngle > 360) {
+            normalisedAngle -= 360;
         }
-        while (angle < 0) {
-            angle += 360;
+        while (normalisedAngle < 0) {
+            normalisedAngle += 360;
         }
 
         // All quadrants use the same trigonometric projection — sin/cos handle sign automatically
+        const radians = (normalisedAngle * Math.PI) / 180;
         fireworkParticle.velocityX =
-            FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+            FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.sin(radians) * (1 - Math.random() * VELOCITY);
         fireworkParticle.velocityY =
-            FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos((angle * Math.PI) / 180) * (1 - Math.random() * VELOCITY);
+            FIREWORK_PARTICLE_INITIAL_VELOCITY * Math.cos(radians) * (1 - Math.random() * VELOCITY);
 
         fireworkParticle.positionX = x;
         fireworkParticle.positionY = y;
