@@ -10,10 +10,10 @@ Published as `@nowtwo-llc/fireworksify` to **two registries**:
 
 | Registry | Role |
 | --- | --- |
-| npm (`registry.npmjs.org`) | Public. This is what consumers install and the only one the README documents. |
-| GitHub Packages | Internal backup mirror. Not user-facing — do not document it in the README. |
+| npm (`registry.npmjs.org`) | Public. The only registry this package is published to. |
 
-Both the npm org and the GitHub org are named `nowtwo-llc`, so one package name publishes to both with no rewriting.
+A GitHub Packages mirror was published previously and has been removed: it required an access
+token even for public packages. Do not reintroduce it.
 
 Publishing to npm does **not** create a GitHub Package; the registries are unrelated, which is why the mirror job exists.
 
@@ -112,7 +112,7 @@ Assertions are chai-style (`expect(x).to.equal(y)`), which Vitest supports nativ
 ## CI
 
 - `ci.yml` — typecheck, lint, test, build, `npm pack --dry-run` on pushes and PRs to `main`.
-- `publish.yml` — on `v*` tags. Verifies the tag matches `package.json`, then publishes in two jobs: npm first via OIDC trusted publishing (no token; needs `id-token: write`, Node >= 22.14.0 and npm >= 11.5.1, so it upgrades npm because setup-node ships 10.x), then the GitHub Packages backup with `GITHUB_TOKEN`. The mirror job `needs: npm`, so a failed or unapproved npm publish stops it.
+- `publish.yml` — on `v*` tags. Verifies the tag matches `package.json`, then publishes to npm via OIDC trusted publishing (no token; needs `id-token: write`, Node >= 22.14.0 and npm >= 11.5.1, so it upgrades npm because setup-node ships 10.x).
 
 Two things in the workflows are security controls, not style — do not "tidy" them away:
 

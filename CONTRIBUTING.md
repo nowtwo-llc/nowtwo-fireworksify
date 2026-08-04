@@ -44,7 +44,7 @@ npm run build:prod
 
 ## Releasing
 
-Releases publish to GitHub Packages from CI:
+Releases publish to the public npm registry from CI:
 
 1. Bump `version` in `package.json`.
 2. Commit, then tag: `git tag v3.1.0 && git push --tags`.
